@@ -9,50 +9,82 @@ include("../includes/db.php");
 $result = $conn->query("SELECT * FROM visitors ORDER BY id DESC");
 ?>
 
-<!DOCTYPE html>
+
+        <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Admin Dashboard - Visitors</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>Visitor Management System</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body {
+      display: flex;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .sidebar {
+      width: 220px;
+      background-color: #343a40;
+      color: white;
+      padding-top: 20px;
+    }
+    .sidebar a {
+      color: white;
+      display: block;
+      padding: 12px;
+      text-decoration: none;
+    }
+    .sidebar a:hover {
+      background-color: #495057;
+    }
+    .main-content {
+      flex-grow: 1;
+      background-color: #f4d212ff;
+      padding: 20px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #ffffff;
+      padding: 15px 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .header-title {
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .user-role {
+      font-size: 16px;
+      font-weight: 500;
+    }
+  </style>
 </head>
 <body>
-<div class="container mt-4">
-    <h2>🛂 Visitor Management</h2>
-    <a href="add_visitor.php" class="btn btn-success mb-3">➕ Add Visitor</a>
-    <a href="../logout.php" class="btn btn-danger mb-3 float-end">Logout</a>
-    
-    <table class="table table-bordered">
-        <thead class="table-dark">
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>NIC</th>
-                <th>Visit Date</th>
-                <th>Purpose</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        <?php while($row = $result->fetch_assoc()): ?>
-            <tr>
-                <td><?= $row['id'] ?></td>
-                <td><?= htmlspecialchars($row['name']) ?></td>
-                <td><?= $row['nic'] ?></td>
-                <td><?= $row['visit_date'] ?></td>
-                <td><?= $row['purpose'] ?></td>
-                <td>
-                    <a href="edit_visitor.php?id=<?= $row['id'] ?>" class="btn btn-warning btn-sm">✏️ Edit</a>
-                    <a href="delete_visitor.php?id=<?= $row['id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Delete this visitor?')">🗑️ Delete</a>
-                    <a href="view_visitor.php?id=<?= $row['id']; ?>" class="btn btn-sm btn-info">👁️ View</a>
-                    <a href="scan_qr.php" class="btn btn-primary">📷 Scan Visitor QR</a>
 
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <a href="#">Dashboard</a>
+    <a href="add_visitor.php">New Visitor Add</a>
+    <a href="manage_visitors.php">Manage Visitor</a>
+    <a href="visitor_details.php">Visitors Details</a>
+    <a href="#">FAQ</a>
+    <a href="../logout.php">Logout</a>
+  </div>
 
-                </td>
-            </tr>
-        <?php endwhile; ?>
-        </tbody>
-    </table>
-</div>
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="header">
+      <div class="header-title">Visitor Management System</div>
+      <div class="user-role">Admin</div> <!-- or Guard -->
+    </div>
+
+    <div class="content-body mt-4">
+      <h2>Welcome to Dashboard</h2>
+      <p>This is the main content area.</p>
+    </div>
+  </div>
+
 </body>
 </html>
+
