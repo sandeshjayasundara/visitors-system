@@ -50,44 +50,72 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 ?>
 
 <!DOCTYPE html>
-<html lang="si">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visitor Management - Login</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: url('img.jpg') ;
+      background-size: cover;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card {
+      background-color: rgba(154, 19, 195, 0.9);
+      backdrop-filter: blur(5px);
+      border-radius: 15px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .card-header {
+      background-color: #22abb2ff;
+      color: white;
+      border-top-left-radius: 15px;
+      border-top-right-radius: 15px;
+    }
+    .card-footer {
+      text-align: center;
+    }
+    .form-label {
+      font-weight: bold;
+    }
+  </style>
 </head>
-<body class="bg-light">
-  <div class="container mt-5">
+<body>
+  <div class="container">
     <div class="row justify-content-center">
       <div class="col-md-5">
-        <div class="card shadow">
+        <div class="card">
           <div class="card-header text-center">
-            <h4>VISITORS MANAGEMENT SYSTEM <br>Login Panel</h4>
+            <h4>Visitor Management System</h4>
           </div>
           <div class="card-body">
-            <?php if (!empty($error)): ?>
-              <div class="alert alert-danger"><?= $error ?></div>
-            <?php endif; ?>
-            <form method="POST" action="">
+            <form action="login.php" method="POST">
               <div class="mb-3">
-                <label class="form-label">Email</label>
-                <input type="email" name="email" class="form-control" required>
+                <label for="email" class="form-label">Email Address</label>
+                <input type="email" name="email" class="form-control" id="email" placeholder="Enter your email" required>
               </div>
               <div class="mb-3">
-                <label class="form-label">Password</label>
-                <input type="password" name="password" class="form-control" required>
+                <label for="password" class="form-label">Password</label>
+                <input type="password" name="password" class="form-control" id="password" placeholder="Enter your password" required>
               </div>
               <div class="d-grid">
                 <button type="submit" class="btn btn-primary">Login</button>
               </div>
             </form>
           </div>
-          <div class="card-footer text-center">
+          <div class="card-footer">
             <small>Not registered? <a href="register.php">Register here</a></small>
           </div>
         </div>
       </div>
     </div>
   </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
