@@ -125,6 +125,14 @@ try {
         margin-left: 0;
         padding: 15px;
       }
+      .card {
+         cursor: pointer;
+         transition: transform 0.2s;
+      }
+      .card:hover {
+          transform: scale(1.03);
+      }
+
     }
   </style>
 </head>
@@ -145,6 +153,9 @@ try {
     </p>
   </div>
 
+   
+
+
   <!-- Navigation Links -->
   <a href="#"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
   <a href="add_visitor.php"><i class="fas fa-user-plus"></i> New Visitor Add</a>
@@ -163,14 +174,11 @@ try {
 
   <!-- Stats Cards -->
   <div class="row">
-    <div class="col-md-3 mb-3">
-      <div class="card text-white bg-primary">
-        <div class="card-body">
-          <h5 class="card-title">Total Visitors</h5>
-          <p class="card-text"><?= $total_visitors ?></p>
-        </div>
-      </div>
-    </div>
+    <div class="card" onclick="window.location.href='visitor_chart.php'">
+      <h3>Total Visitors</h3>
+    <p><?php echo $total_visitors; ?></p>
+  </div>
+
 
     <div class="col-md-3 mb-3">
       <div class="card text-white bg-success">
