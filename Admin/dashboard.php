@@ -1,21 +1,11 @@
-<?php
-session_start();
-if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') {
-    header("Location: ../login.php");
-    exit();
-}
-include("../includes/db.php");
-
-$result = $conn->query("SELECT * FROM visitors ORDER BY id DESC");
-?>
-
-
-        <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Visitor Management System</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
       display: flex;
@@ -30,61 +20,178 @@ $result = $conn->query("SELECT * FROM visitors ORDER BY id DESC");
     }
     .sidebar a {
       color: white;
-      display: block;
+      display: flex;
+      align-items: center;
       padding: 12px;
       text-decoration: none;
     }
+    .sidebar a i {
+      margin-right: 10px;
+      width: 20px;
+      text-align: center;
+    }
     .sidebar a:hover {
-      background-color: #495057;
+      background-color: #0d0e0eff;
     }
     .main-content {
       flex-grow: 1;
-      background-color: #f4d212ff;
+      background-color: #ac0b0bff;
       padding: 20px;
     }
     .header {
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
-      background-color: #ffffff;
+      background-color: #b716b7ff;
       padding: 15px 20px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 4px rgba(236, 229, 229, 0.67);
+      position: relative;
     }
     .header-title {
-      font-size: 20px;
-      font-weight: bold;
+      font-size: 24px;
+      font-weight:bold;
+      text-align: center;
     }
     .user-role {
+      position: absolute;
+      right: 20px;
       font-size: 16px;
       font-weight: 500;
+    }
+    .card canvas {
+      height: 60px !important;
     }
   </style>
 </head>
 <body>
 
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <a href="#">Dashboard</a>
-    <a href="add_visitor.php">New Visitor Add</a>
-    <a href="manage_visitors.php">Manage Visitor</a>
-    <a href="visitor_details.php">Visitors Details</a>
-    <a href="#">FAQ</a>
-    <a href="../logout.php">Logout</a>
+<!-- Sidebar -->
+<div class="sidebar">
+  <a href="#"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
+  <a href="add_visitor.php"><i class="fas fa-user-plus"></i>New Visitor Add</a>
+  <a href="manage_visitors.php"><i class="fas fa-users-cog"></i>Manage Visitor</a>
+  <a href="visitor_details.php"><i class="fas fa-address-card"></i>Visitors Details</a>
+  <a href="#"><i class="fas fa-question-circle"></i>FAQ</a>
+  <a href="../logout.php"><i class="fas fa-sign-out-alt"></i>Logout</a>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+  <div class="header">
+    <div class="header-title">Visitor Management System</div>
+    <div class="user-role">Admin</div>
   </div>
 
-  <!-- Main Content -->
-  <div class="main-content">
-    <div class="header">
-      <div class="header-title">Visitor Management System</div>
-      <div class="user-role">Admin</div> <!-- or Guard -->
-    </div>
+  <div class="content-body mt-4">
+    <!-- Centered Summary Cards -->
+    <div class="d-flex justify-content-center">
+      <div class="row mb-4" style="max-width: 1140px; width: 100%;">
+        <div class="col-md-3">
+          <div class="card text-white bg-primary">
+            <div class="card-body">
+              <h5 class="card-title">Total Visitors</h5>
+              <canvas id="totalVisitorsChart"></canvas>
+            </div>
+          </div>
+        </div>
 
-    <div class="content-body mt-4">
-      <h2>Welcome to Dashboard</h2>
-      <p>This is the main content area.</p>
+        <div class="col-md-3">
+          <div class="card text-white bg-success">
+            <div class="card-body">
+              <h5 class="card-title">Today's Visitors</h5>
+              <canvas id="todaysVisitorsChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="card text-white bg-warning">
+            <div class="card-body">
+              <h5 class="card-title">Yesterday's Visitors</h5>
+              <canvas id="yesterdaysVisitorsChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="card text-white bg-danger">
+            <div class="card-body">
+              <h5 class="card-title">Last 7 Days</h5>
+              <canvas id="last7DaysChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
+</div>
+
+<!-- Chart Script -->
+<script>
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: { display: false },
+      y: { display: false }
+    },
+    plugins: {
+      legend: { display: false },
+      tooltip: { enabled: false }
+    }
+  };
+
+  new Chart(document.getElementById('totalVisitorsChart'), {
+    type: 'bar',
+    data: {
+      labels: ["M", "T", "W", "T", "F", "S", "S"],
+      datasets: [{
+        data: [50, 60, 80, 40, 70, 90, 100],
+        backgroundColor: "#ffffff"
+      }]
+    },
+    options
+  });
+
+  new Chart(document.getElementById('todaysVisitorsChart'), {
+    type: 'line',
+    data: {
+      labels: ["9AM", "11AM", "1PM", "3PM", "5PM"],
+      datasets: [{
+        data: [5, 15, 10, 20, 25],
+        borderColor: "#ffffff",
+        backgroundColor: "rgba(255,255,255,0.2)",
+        fill: true
+      }]
+    },
+    options
+  });
+
+  new Chart(document.getElementById('yesterdaysVisitorsChart'), {
+    type: 'bar',
+    data: {
+      labels: ["M", "T", "W", "T", "F", "S", "S"],
+      datasets: [{
+        data: [30, 45, 60, 40, 55, 75, 85],
+        backgroundColor: "#ffffff"
+      }]
+    },
+    options
+  });
+
+  new Chart(document.getElementById('last7DaysChart'), {
+    type: 'line',
+    data: {
+      labels: ["Day 1", "2", "3", "4", "5", "6", "7"],
+      datasets: [{
+        data: [70, 60, 65, 75, 85, 90, 100],
+        borderColor: "#ffffff",
+        fill: false 
+      }]
+    },
+    options
+  });
+</script>
 
 </body>
 </html>
-
