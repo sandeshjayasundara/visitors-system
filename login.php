@@ -8,26 +8,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = trim($_POST["email"]);
     $password = trim($_POST["password"]);
 
-    // Validation
     if (empty($email) || empty($password)) {
-        $error = "සියලුම කොටස් පුරවන්න.";
+        $error = "⚠️ සියලුම කොටස් පුරවන්න.";
     } else {
-        // Prepared Statement to avoid SQL Injection
-        $stmt = $conn->prepare("SELECT id, username, password, role FROM users WHERE email = ?");
+        $stmt = $conn->prepare("SELECT id, username, password, role, profile_image FROM users WHERE email = ?");
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $stmt->store_result();
 
-        // Check if user exists
         if ($stmt->num_rows > 0) {
-            $stmt->bind_result($id, $username, $hashed_password, $role);
+            $stmt->bind_result($id, $username, $hashed_password, $role, $profile_image);
             $stmt->fetch();
 
-            // Verify password
             if (password_verify($password, $hashed_password)) {
                 $_SESSION["user_id"] = $id;
                 $_SESSION["username"] = $username;
                 $_SESSION["user_role"] = $role;
+                $_SESSION["profile_image"] = $profile_image;
 
                 // Redirect based on role
                 if ($role === "admin") {
@@ -37,51 +34,82 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     header("Location: Security/dashboard.php");
                     exit;
                 } else {
-                    $error = "අනීතික භූමිකාවක්.";
+                    $error = "⚠️ අනීතික භූමිකාවක්.";
                 }
             } else {
-                $error = "මුරපදය වැරදියි.";
+                $error = "❌ මුරපදය වැරදියි.";
             }
         } else {
-            $error = "පරිශීලකයෙකු සොයාගත නොහැක.";
+            $error = "❌ පරිශීලකයෙකු සොයාගත නොහැක.";
         }
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Visitor Management - Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     body {
-      background: url('img.jpg') ;
+      background: url('img.jpg') no-repeat center center fixed;
       background-size: cover;
       height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
     }
+
     .card {
-      background-color: rgba(154, 19, 195, 0.9);
-      backdrop-filter: blur(5px);
+      background-color: rgba(0, 0, 0, 0.7);
+      color: white;
       border-radius: 15px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
     }
+
     .card-header {
-      background-color: #22abb2ff;
+      background-color: #22abb2;
       color: white;
       border-top-left-radius: 15px;
       border-top-right-radius: 15px;
-    }
-    .card-footer {
       text-align: center;
+      font-weight: bold;
     }
+
     .form-label {
       font-weight: bold;
+    }
+
+    .btn-primary {
+      background-color: #22abb2;
+      border: none;
+    }
+
+    .btn-primary:hover {
+      background-color: #1a8c95;
+    }
+
+    .error-message {
+      color: #ffc107;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .card-footer {
+      text-align: center;
+      background: transparent;
+      color: #ccc;
+    }
+
+    .card-footer a {
+      color: #0fdfe9;
+      text-decoration: none;
+    }
+
+    .card-footer a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
@@ -90,26 +118,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="row justify-content-center">
       <div class="col-md-5">
         <div class="card">
-          <div class="card-header text-center">
-            <h4>Visitor Management System</h4>
+          <div class="card-header">
+            <h4>Visitor Management Login</h4>
           </div>
           <div class="card-body">
+            <?php if (!empty($error)): ?>
+              <div class="error-message"><?= htmlspecialchars($error) ?></div>
+            <?php endif; ?>
             <form action="login.php" method="POST">
               <div class="mb-3">
-                <label for="email" class="form-label">Email Address</label>
+                <label for="email" class="form-label">ඊමේල් ලිපිනය</label>
                 <input type="email" name="email" class="form-control" id="email" placeholder="Enter your email" required>
               </div>
               <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
+                <label for="password" class="form-label">මුරපදය</label>
                 <input type="password" name="password" class="form-control" id="password" placeholder="Enter your password" required>
               </div>
               <div class="d-grid">
-                <button type="submit" class="btn btn-primary">Login</button>
+                <button type="submit" class="btn btn-primary">පිවිසෙන්න</button>
               </div>
             </form>
           </div>
           <div class="card-footer">
-            <small>Not registered? <a href="register.php">Register here</a></small>
+            <small>නව පරිශීලකයෙක්ද? <a href="register.php">ලියාපදිංචි වන්න</a></small>
           </div>
         </div>
       </div>
