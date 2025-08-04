@@ -7,25 +7,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = trim($_POST['username']);
     $email = trim($_POST['email']);
     $role = $_POST['role'];
+    $admin_code = $_POST['admin_code'];
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
-    // Validate: only letters allowed for username
+    $expected_code = "SECRET2025"; // Set your own code
+
     if (!preg_match("/^[a-zA-Z]+$/", $username)) {
-        $message = "For the Username need to letters ";
+        $message = "For the Username need to letters only.";
+    } elseif ($admin_code !== $expected_code) {
+        $message = "Invalid admin code. Registration denied.";
     } else {
         $sql = "INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("ssss", $username, $email, $password, $role);
 
         if ($stmt->execute()) {
-            $message = "Register Compleat!!";
+            $message = "Register Complete!";
         } else {
-            $message = "Faild" . $conn->error;
+            $message = "Failed: " . $conn->error;
         }
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -41,7 +44,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <form method="POST">
         <div class="mb-3">
             <label>Username</label>
-            <input type="text" name="username" required class="form-control" pattern="[A-Za-z]+" title="අකුරු විතරයි යෙදිය යුතුය!">
+            <input type="text" name="username" required class="form-control" pattern="[A-Za-z]+" title="Only letters allowed">
         </div>
         <div class="mb-3">
             <label>Email:</label>
@@ -57,6 +60,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <option value="admin">Admin</option>
                 <option value="security">Security</option>
             </select>
+        </div>
+        <div class="mb-3">
+            <label>Admin Secret Code:</label>
+            <input type="text" name="admin_code" required class="form-control">
         </div>
         <button class="btn btn-primary" type="submit">Register</button>
     </form>

@@ -1,6 +1,6 @@
 <?php
 session_start();
-if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') {
+if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'security') {
     header("Location: ../login.php");
     exit();
 }
@@ -68,9 +68,7 @@ $result = $conn->query("SELECT * FROM visitors ORDER BY id DESC");
                 <td><?= $row['visit_date'] ?></td>
                 <td><?= htmlspecialchars($row['purpose']) ?></td>
                 <td>
-                    <a href="view_visitor.php?id=<?= $row['id'] ?>" class="btn btn-info btn-sm">👁 View</a>
-                    <a href="generate_pdf.php?id=<?= $row['id'] ?>" class="btn btn-primary btn-sm" target="_blank">📄 PDF</a>
-                    
+                    <a href="generate_qr.php?id=<?= $row['id'] ?>" class="btn btn-primary btn-sm" target="_blank">QR<a>
                 </td>
             </tr>
             <?php } ?>

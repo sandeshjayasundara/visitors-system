@@ -2,6 +2,14 @@
 session_start();
 include '../includes/db.php'; // Your DB config file
 
+// Fetch data for line chart (Visitors by date)
+$chartData = [];
+$result = $conn->query("SELECT DATE(created_at) as date, COUNT(*) as count FROM visitors GROUP BY DATE(created_at) ORDER BY DATE(created_at) ASC");
+while ($row = $result->fetch_assoc()) {
+    $chartData[] = [$row['date'], (int)$row['count']];
+}
+
+
 // Get session data
 $username = $_SESSION['username'] ?? 'Guest';
 $userRole = $_SESSION['user_role'] ?? 'Unknown';
@@ -164,7 +172,6 @@ try {
   <a href="#"><i class="fas fa-question-circle"></i> FAQ</a>
   <a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
 </div>
-
 <!-- Main Content -->
 <div class="main-content">
   <div class="header mb-4">
@@ -174,40 +181,165 @@ try {
 
   <!-- Stats Cards -->
   <div class="row">
-    <div class="card" onclick="window.location.href='visitor_chart.php'">
-      <h3>Total Visitors</h3>
-    <p><?php echo $total_visitors; ?></p>
-  </div>
-
+    <div class="col-md-3 mb-3">
+      <div class="card text-white bg-success" onclick="window.location.href='visitor_chart.php'">
+        <div class="card-body text-center">
+          <h5 class="card-title">Total Visitors</h5>
+          <p class="card-text display-4"><?php echo $total_visitors; ?></p>
+        </div>
+      </div>
+    </div>
 
     <div class="col-md-3 mb-3">
-      <div class="card text-white bg-success">
-        <div class="card-body">
+      <div class="card text-white bg-primary">
+        <div class="card-body text-center">
           <h5 class="card-title">Today's Visitors</h5>
-          <p class="card-text"><?= $today_visitors ?></p>
+          <p class="card-text display-4"><?= $today_visitors ?></p>
         </div>
       </div>
     </div>
 
     <div class="col-md-3 mb-3">
       <div class="card text-white bg-warning">
-        <div class="card-body">
+        <div class="card-body text-center">
           <h5 class="card-title">Yesterday's Visitors</h5>
-          <p class="card-text"><?= $yesterday_visitors ?></p>
+          <p class="card-text display-4"><?= $yesterday_visitors ?></p>
         </div>
       </div>
     </div>
 
     <div class="col-md-3 mb-3">
       <div class="card text-white bg-danger">
-        <div class="card-body">
+        <div class="card-body text-center">
           <h5 class="card-title">Last 7 Days</h5>
-          <p class="card-text"><?= $week_visitors ?></p>
+          <p class="card-text display-4"><?= $week_visitors ?></p>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- Line Chart Container -->
+  <div class="card mt-4">
+    <div class="card-body">
+      <h5 class="card-title text-center mb-4">Visitor Trend (Daily)</h5>
+      <div id="line_chart" style="width: 100%; height: 400px;"></div>
+    </div>
+  </div>
 </div>
+
+<!-- Google Charts Scripts -->
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script>
+  google.charts.load('current', {'packages':['corechart']});
+  google.charts.setOnLoadCallback(drawChart);
+
+  function drawChart() {
+    var data = google.visualization.arrayToDataTable([
+      ['Date', 'Visitors'],
+      <?php foreach ($chartData as $row) {
+        echo "['{$row[0]}', {$row[1]}],";
+      } ?>
+    ]);
+
+    var options = {
+      title: '',
+      curveType: 'function',
+      legend: { position: 'bottom' },
+      colors: ['#28a745'],
+      vAxis: {
+        minValue: 0
+      }
+    };
+
+    var chart = new google.visualization.LineChart(document.getElementById('line_chart'));
+    chart.draw(data, options);
+  }
+</script>
+<!-- Main Content -->
+<div class="main-content">
+  <div class="header mb-4">
+    <div class="header-title">Visitor Management System</div>
+    <div class="user-role"><?php echo ucfirst($userRole); ?></div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="row">
+    <div class="col-md-3 mb-3">
+      <div class="card text-white bg-success" onclick="window.location.href='visitor_chart.php'">
+        <div class="card-body text-center">
+          <h5 class="card-title">Total Visitors</h5>
+          <p class="card-text display-4"><?php echo $total_visitors; ?></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+      <div class="card text-white bg-primary">
+        <div class="card-body text-center">
+          <h5 class="card-title">Today's Visitors</h5>
+          <p class="card-text display-4"><?= $today_visitors ?></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+      <div class="card text-white bg-warning">
+        <div class="card-body text-center">
+          <h5 class="card-title">Yesterday's Visitors</h5>
+          <p class="card-text display-4"><?= $yesterday_visitors ?></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+      <div class="card text-white bg-danger">
+        <div class="card-body text-center">
+          <h5 class="card-title">Last 7 Days</h5>
+          <p class="card-text display-4"><?= $week_visitors ?></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Line Chart Container -->
+  <div class="card mt-4">
+    <div class="card-body">
+      <h5 class="card-title text-center mb-4">Visitor Trend (Daily)</h5>
+      <div id="line_chart" style="width: 100%; height: 400px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Google Charts Scripts -->
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script>
+  google.charts.load('current', {'packages':['corechart']});
+  google.charts.setOnLoadCallback(drawChart);
+
+  function drawChart() {
+    var data = google.visualization.arrayToDataTable([
+      ['Date', 'Visitors'],
+      <?php foreach ($chartData as $row) {
+        echo "['{$row[0]}', {$row[1]}],";
+      } ?>
+    ]);
+
+    var options = {
+      title: '',
+      curveType: 'function',
+      legend: { position: 'bottom' },
+      colors: ['#28a745'],
+      vAxis: {
+        minValue: 0
+      }
+    };
+
+    var chart = new google.visualization.LineChart(document.getElementById('line_chart'));
+    chart.draw(data, options);
+  }
+</script>
+
+
 
 </body>
 </html>
