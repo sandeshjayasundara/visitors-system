@@ -18,11 +18,11 @@ $result = $conn->query("SELECT * FROM visitors ORDER BY id DESC");
 
     <style>
         body {
-            background-color: #f5f7fa; /* Light gray-blue background */
+            background-color: #f5f7fa; 
         }
 
         .container {
-            background-color: #0fa9f6ff; /* White container */
+            background-color: #0fa9f6ff; 
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             padding: 25px;
@@ -68,7 +68,7 @@ $result = $conn->query("SELECT * FROM visitors ORDER BY id DESC");
                 <td><?= $row['visit_date'] ?></td>
                 <td><?= htmlspecialchars($row['purpose']) ?></td>
                 <td>
-                    <a href="generate_qr.php?id=<?= $row['id'] ?>" class="btn btn-primary btn-sm" target="_blank">QR<a>
+                     <a href="scan_qr.php?id=<?= $row['id'] ?>" class="btn btn-primary btn-sm" target="_blank">📄 QR</a>
                 </td>
             </tr>
             <?php } ?>

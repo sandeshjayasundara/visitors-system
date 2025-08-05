@@ -1,6 +1,5 @@
 <?php
-require_once('../tcpdf/tcpdf.php'); // path to your tcpdf folder
-
+require_once('../tcpdf/tcpdf.php');
 include("../connect.php");
 
 if (isset($_GET['id'])) {
@@ -9,12 +8,13 @@ if (isset($_GET['id'])) {
     $visitor = $result->fetch_assoc();
 
     // Create new PDF document
-    $pdf = new tcpdf();
+    $pdf = new TCPDF();
     $pdf->SetCreator(PDF_CREATOR);
     $pdf->SetAuthor('Visitor System');
     $pdf->SetTitle('Visitor Details');
     $pdf->AddPage();
 
+    // Visitor details table
     $html = '
     <h2>Visitor Details</h2>
     <table border="1" cellpadding="5">
@@ -28,7 +28,18 @@ if (isset($_GET['id'])) {
     </table>';
 
     $pdf->writeHTML($html, true, false, true, false, '');
-    $pdf->Output('visitor_details.pdf', 'I'); // Display in browser
+
+    // Add space before QR Code
+    $pdf->Ln(10); // Add vertical space (10mm)
+
+    // Prepare visitor data for QR Code
+    $qrData = "Visitor ID: {$visitor['id']}\nName: {$visitor['name']}\nEmail: {$visitor['email']}\nPhone: {$visitor['phone']}\nPurpose: {$visitor['purpose']}\nVisit Date: {$visitor['visit_date']}";
+
+    // Generate QR Code BELOW the table
+    $pdf->write2DBarcode($qrData, 'QRCODE,H', '', '', 40, 40, null, 'N');
+
+    // Output PDF to browser
+    $pdf->Output('visitor_details.pdf', 'I');
 } else {
     echo "No visitor ID selected.";
 }

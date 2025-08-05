@@ -9,7 +9,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = trim($_POST["password"]);
 
     if (empty($email) || empty($password)) {
-        $error = "⚠️ සියලුම කොටස් පුරවන්න.";
+        $error = " සියලුම කොටස් පුරවන්න.";
     } else {
         $stmt = $conn->prepare("SELECT id, username, password, role, profile_image FROM users WHERE email = ?");
         $stmt->bind_param("s", $email);
@@ -34,13 +34,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     header("Location: Security/dashboard.php");
                     exit;
                 } else {
-                    $error = "⚠️ අනීතික භූමිකාවක්.";
+                    $error = " අනීතික භූමිකාවක්.";
                 }
             } else {
-                $error = "❌ මුරපදය වැරදියි.";
+                $error = " මුරපදය වැරදියි.";
             }
         } else {
-            $error = "❌ පරිශීලකයෙකු සොයාගත නොහැක.";
+            $error = " පරිශීලකයෙකු සොයාගත නොහැක.";
         }
     }
 }

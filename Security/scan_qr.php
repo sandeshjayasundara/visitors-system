@@ -1,39 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>QR Code Scanner</title>
-  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+  <title>Upload PDF to Scan QR</title>
   <style>
-    #reader {
-      width: 400px;
-      margin: auto;
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
       padding-top: 50px;
     }
-    #result {
-      text-align: center;
-      margin-top: 20px;
-      font-size: 18px;
+    input[type="file"] {
+      margin: 20px;
     }
   </style>
 </head>
 <body>
-  <h2 style="text-align:center;">🔍 Scan Visitor QR Code</h2>
-
-  <div id="reader"></div>
-  <div id="result">Scanned Visitor ID: <span id="visitorId"></span></div>
-
-  <script>
-    function onScanSuccess(decodedText, decodedResult) {
-      document.getElementById('visitorId').innerText = decodedText;
-      
-      // Redirect to view_visitor.php with ID
-      window.location.href = "view_visitor.php?id=" + decodedText;
-    }
-
-    let html5QrcodeScanner = new Html5QrcodeScanner(
-      "reader", { fps: 10, qrbox: 250 });
-
-    html5QrcodeScanner.render(onScanSuccess);
-  </script>
+  <h2>📄 Upload PDF to Scan Visitor QR</h2>
+  <form action="process_pdf_qr.php" method="POST" enctype="multipart/form-data">
+    <input type="file" name="pdf_file" accept="application/pdf" required>
+    <br>
+    <button type="submit">Scan QR</button>
+  </form>
 </body>
 </html>

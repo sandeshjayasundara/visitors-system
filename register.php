@@ -10,7 +10,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $admin_code = $_POST['admin_code'];
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
-    $expected_code = "SECRET2025"; // Set your own code
+    $expected_code = "SECRET2025"; 
 
     if (!preg_match("/^[a-zA-Z]+$/", $username)) {
         $message = "For the Username need to letters only.";
